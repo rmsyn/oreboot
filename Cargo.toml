@@ -4,10 +4,12 @@ members = [
   "src/arch",
   "src/console",
   "src/cpu",
+  "src/drivers",
   "src/ec",
   "src/soc",
 
   "src/lib/consts",
+  "src/lib/device",
   "src/lib/util",
 
   "src/mainboard/sunxi/nezha/*",

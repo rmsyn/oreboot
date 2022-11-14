@@ -2,6 +2,10 @@
 #![deny(warnings)]
 #![no_std]
 
+pub mod fw_config;
+pub mod region;
+pub mod timer;
+
 #[inline]
 pub fn round_up_4k(num: usize) -> usize {
     num.checked_add(0xfff).expect("overflow in round_up_4k()") & !0xfff
