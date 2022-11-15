@@ -9,7 +9,8 @@
 //#include "ec_message.h"
 
 /* Common utilities */
-use crate::google::chromeec::ec::*;
+use crate::google::chromeec::{ec::*, ec_i2c::{REQ_BUF, RESP_BUF}};
+use drivers::context::Context;
 
 /* Dumps EC command / response data into debug output.
  *
@@ -162,7 +163,7 @@ pub fn handle_proto3_response(resp: &ECResponseV3, cec_command: &mut ChromeECCom
 	Ok(rs.data_len() as usize)
 }
 
-pub fn send_command_proto3(cec_command: &mut ChromeECCommand, crosec_io: CrosECIO, context: ECContext) -> Result<usize, Error> {
+pub fn send_command_proto3(cec_command: &mut ChromeECCommand, crosec_io: CrosECIO, context: &mut dyn Context) -> Result<usize, Error> {
     let resp = ECResponseV3::new();
 
 	/* Create request packet */
@@ -170,11 +171,16 @@ pub fn send_command_proto3(cec_command: &mut ChromeECCommand, crosec_io: CrosECI
 
 	/* Prepare response buffer */
 	let in_bytes = prepare_proto3_response_buffer(cec_command, &resp)?;
+    let out_bytes = cec_command.size_in() as usize + req.header().len() as usize;
 
-    let out_bytes = req.header().data_len() as usize;
+    {
+        (*REQ_BUF.write()).data[..out_bytes].copy_from_slice(&req.as_bytes());
+        (*RESP_BUF.write()).data[..in_bytes].copy_from_slice(&resp.as_bytes());
+    }
+
 	let rv = crosec_io(out_bytes, in_bytes, context);
-	if rv != 0 {
-		println!("{}: failed to complete I/O: Err = {:02x}.\n",
+	if rv.is_err() {
+		println!("{}: failed to complete I/O: Err = {:?}",
 		       "send_command_proto3", rv);
 		return Err(Error::ECResError);
 	}
@@ -183,12 +189,12 @@ pub fn send_command_proto3(cec_command: &mut ChromeECCommand, crosec_io: CrosECI
 	handle_proto3_response(&resp, cec_command)
 }
 
-pub fn crosec_command_proto_v3(cec_command: &mut ChromeECCommand, crosec_io: CrosECIO, context: ECContext) -> Result<usize, Error>
+pub fn crosec_command_proto_v3(cec_command: &mut ChromeECCommand, crosec_io: CrosECIO, context: &mut dyn Context) -> Result<usize, Error>
 {
 	send_command_proto3(cec_command, crosec_io, context)
 }
 
-pub fn crosec_command_proto(cec_command: &mut ChromeECCommand, crosec_io: CrosECIO, context: ECContext) -> Result<usize, Error>
+pub fn crosec_command_proto(cec_command: &mut ChromeECCommand, crosec_io: CrosECIO, context: &mut dyn Context) -> Result<usize, Error>
 {
 	// TODO(hungte) Detect and fallback to v2 if we need.
 	crosec_command_proto_v3(cec_command, crosec_io, context)

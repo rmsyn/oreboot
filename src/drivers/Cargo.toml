@@ -1,11 +1,11 @@
 [package]
-name = "ec"
+name = "drivers"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-spin = "0.9.4"
-drivers = { path = "../drivers" }
+downcast-rs = "1.2.0"
+bitfield = "0.14.0"
 util = { path = "../lib/util" }

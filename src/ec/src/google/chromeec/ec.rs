@@ -1,3 +1,6 @@
+use crate::google::chromeec::{ec_spi::google_chromeec_command, ec_commands::*};
+use drivers::{context::Context, spi::spi_generic::{Error as SPIError, SPICtrlrBuses}};
+
 pub const EC_HOST_PARAM_SIZE: usize = 0xfc;
 pub const HEADER_BYTES: usize = 8;
 pub const MSG_HEADER: usize = 0xec;
@@ -10,6 +13,7 @@ pub const EC_HOST_RESPONSE_HEADER_BYTES: usize = 8;
 pub const EC_HOST_REQUEST_VERSION: u8 = 3;
 pub const EC_HOST_RESPONSE_VERSION: u8 = 3;
 
+#[derive(Debug)]
 pub enum Error {
     ECResRequestTruncated,
     ECResResponseTooBig,
@@ -17,6 +21,8 @@ pub enum Error {
     ECResInvalidChecksum,
     ECResResponse(i32),
     ECResError,
+    ECSPIError(SPIError),
+    ECFailedContextDowncast,
 }
 
 /* internal structure to send a command to the EC and wait for response. */
@@ -366,6 +372,24 @@ impl ECResponseV3 {
     }
 }
 
-pub struct ECContext;
+pub type CrosECIO = fn(usize, usize, &mut dyn Context) -> Result<(), Error>;
 
-pub type CrosECIO = fn(usize, usize, ECContext) -> usize;
+/**
+ * google_chromeec_get_board_version() - Get the board version
+ * @version: Out parameter to retrieve the board Version
+ *
+ * Return: 0 on success or -1 on failure/error.
+ *
+ * This function is used to get the board version information from EC.
+ */
+pub fn google_chromeec_get_board_version(_version: u32, spi_map: &[SPICtrlrBuses]) -> Result<u32, Error> {
+    let resp = ECResponseBoardVersion::new();
+	let mut cmd = ChromeECCommand::new();
+	cmd.set_cmd_code(EC_CMD_GET_BOARD_VERSION);
+	cmd.set_size_out(resp.len() as u16);
+	cmd.data_out_mut().copy_from_slice(&resp.as_bytes());
+
+	google_chromeec_command(&mut cmd, spi_map)?;
+
+	Ok(resp.board_version() as u32)
+}
