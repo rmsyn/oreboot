@@ -3,6 +3,7 @@
 #![no_std]
 
 pub mod fw_config;
+pub mod hexstrtobin;
 pub mod region;
 pub mod timer;
 

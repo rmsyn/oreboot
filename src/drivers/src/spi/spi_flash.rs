@@ -1,6 +1,6 @@
+use crate::spi::spi_generic::{Error, SPISlave};
 use bitfield::bitfield;
 use util::region::Region;
-use crate::spi::spi_generic::{SPISlave, Error};
 
 bitfield! {
     pub struct SPIFlashPartID(u16);
@@ -21,7 +21,8 @@ bitfield! {
 
 impl Clone for SPIFlashFlags {
     fn clone(&self) -> Self {
-        let mut f = Self(0); {
+        let mut f = Self(0);
+        {
             f.set_dual_output(self.dual_output());
             f.set_dual_io(self.dual_io());
             f
@@ -79,7 +80,7 @@ pub struct SPIFlash {
     page_size: u32,
     erase_cmd: u8,
     status_cmd: u8,
-    pp_cmd: u8, /* Page program command */
+    pp_cmd: u8,   /* Page program command */
     wren_cmd: u8, /* Write Enable command */
     ops: Option<SPIFlashOps>,
     /* If Some all protection callbacks exist */
@@ -89,25 +90,25 @@ pub struct SPIFlash {
 
 /// Current code assumes all callbacks are supplied in this object.
 pub struct SPIFlashProtectionOps {
-	/*
-	 * Returns 1 if the whole region is software write protected.
-	 * Hardware write protection mechanism aren't accounted.
-	 * If the write protection could be changed, due to unlocked status
-	 * register for example, 0 should be returned.
-	 * Returns 0 on success.
-	 */
+    /*
+     * Returns 1 if the whole region is software write protected.
+     * Hardware write protection mechanism aren't accounted.
+     * If the write protection could be changed, due to unlocked status
+     * register for example, 0 should be returned.
+     * Returns 0 on success.
+     */
     pub get_write: Option<fn(&SPIFlash, &Region) -> Result<(), Error>>,
 
-	/*
-	 * Enable the status register write protection, if supported on the
-	 * requested region, and optionally enable status register lock-down.
-	 * Returns 0 if the whole region was software write protected.
-	 * Hardware write protection mechanism aren't accounted.
-	 * If the status register is locked and the requested configuration
-	 * doesn't match the selected one, return an error.
-	 * Only a single region is supported !
-	 *
-	 * @return 0 on success
-	 */
+    /*
+     * Enable the status register write protection, if supported on the
+     * requested region, and optionally enable status register lock-down.
+     * Returns 0 if the whole region was software write protected.
+     * Hardware write protection mechanism aren't accounted.
+     * If the status register is locked and the requested configuration
+     * doesn't match the selected one, return an error.
+     * Only a single region is supported !
+     *
+     * @return 0 on success
+     */
     pub set_write: Option<fn(&SPIFlash, &Region, SPIFlashStatusRegLockdown) -> Result<(), Error>>,
 }

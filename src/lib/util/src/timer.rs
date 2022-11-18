@@ -114,15 +114,15 @@ impl Stopwatch {
 pub fn udelay(mut usec: u32) {
     let mut sw = Stopwatch::new();
 
-	/*
-	 * As the timer granularity is in microseconds pad the
-	 * requested delay by one to get at least >= requested usec delay.
-	 */
-	usec += 1;
+    /*
+     * As the timer granularity is in microseconds pad the
+     * requested delay by one to get at least >= requested usec delay.
+     */
+    usec += 1;
 
     // TODO: add thread_yield_microseconds impl
-	//if !thread_yield_microseconds(usec) {
-	//      return;
+    //if !thread_yield_microseconds(usec) {
+    //      return;
     //}
 
     sw.init_usecs_expire(usec as u64);
