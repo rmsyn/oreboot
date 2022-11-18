@@ -6,7 +6,9 @@ members = [
   "src/cpu",
   "src/soc",
 
+  "src/lib/acpi",
   "src/lib/consts",
+  "src/lib/device",
   "src/lib/util",
 
   "src/mainboard/sunxi/nezha/*",

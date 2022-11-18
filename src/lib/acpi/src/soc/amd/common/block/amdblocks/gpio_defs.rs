@@ -1,0 +1,1 @@
+pub const AMD_GPIO_FIRST_REMOTE_GPIO_NUMBER: usize = 256;
