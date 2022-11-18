@@ -10,6 +10,8 @@ members = [
 
   "src/lib/consts",
   "src/lib/util",
+  "src/lib/smp",
+  "src/lib/thread",
 
   "src/mainboard/sunxi/nezha/*",
   "src/mainboard/emulation/*",

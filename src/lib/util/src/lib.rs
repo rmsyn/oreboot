@@ -4,6 +4,7 @@
 
 pub mod region;
 pub mod timer;
+pub mod cb_err;
 
 #[inline]
 pub fn round_up_4k(num: usize) -> usize {

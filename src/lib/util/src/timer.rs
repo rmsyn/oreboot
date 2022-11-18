@@ -128,3 +128,7 @@ pub fn udelay(mut usec: u32) {
     sw.init_usecs_expire(usec as u64);
     sw.wait_until_expired();
 }
+
+pub fn timers_run() {
+    unimplemented!("requires timer_queue implementation");
+}
