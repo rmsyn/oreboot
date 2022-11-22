@@ -1,4 +1,5 @@
 pub const EC_CMD_GET_BOARD_VERSION: u16 = 0x0006;
+pub const EC_COMMAND_PROTOCOL_3: u8 = 0xda;
 
 pub enum HostEventCode {
     None = 0,

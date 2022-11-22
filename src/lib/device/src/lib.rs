@@ -3,6 +3,8 @@
 #![no_std]
 
 pub mod device_util;
+pub mod i2c;
+pub mod i2c_simple;
 pub mod path;
 pub mod resource;
 pub mod soundwire;
@@ -18,6 +20,8 @@ use {path::DevicePath, resource::Resource};
 #[derive(Debug)]
 pub enum Error {
     General,
+    I2cClockStretchTimeout,
+    I2cArbitration,
 }
 
 bitfield! {

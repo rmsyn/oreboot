@@ -26,6 +26,10 @@ pub enum Error {
     ECResError,
     ECSPIError(SPIError),
     ECFailedContextDowncast,
+    InvalidPacketSize,
+    FailedI2cTransfer,
+    FailedI2cCommand(u8),
+    I2cResponseLengthMismatch,
 }
 
 /* internal structure to send a command to the EC and wait for response. */
