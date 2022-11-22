@@ -55,7 +55,7 @@ pub fn cros_ec_calc_checksum(data: &[u8]) -> u8 {
  * @param cmd		Packed command bit stream.
  * @return packet size in bytes, or <0 if error.
  */
-pub fn create_proto3_request(cec_command: &ChromeECCommand) -> Result<ECCommandV3, Error> {
+pub fn create_proto3_request(cec_command: &ChromeEcCommand) -> Result<ECCommandV3, Error> {
     let mut cmd = ECCommandV3::new();
     let out_bytes = cec_command.size_in() as usize + cmd.header().len();
 
@@ -80,7 +80,8 @@ pub fn create_proto3_request(cec_command: &ChromeECCommand) -> Result<ECCommandV
     }
 
     /* Copy data after header */
-    cmd.data_mut()[..cec_command.size_in() as usize].copy_from_slice(cec_command.data_in());
+    let cec_data = cec_command.data_in()?;
+    cmd.data_mut()[..cec_command.size_in() as usize].copy_from_slice(cec_data.as_bytes());
     let csum = cros_ec_calc_checksum(&cmd.as_bytes()[..out_bytes]);
     /* Write checksum field so the entire packet sums to 0 */
     cmd.header_mut().set_checksum(csum);
@@ -103,7 +104,7 @@ pub fn create_proto3_request(cec_command: &ChromeECCommand) -> Result<ECCommandV
  * @return maximum expected number of bytes in response, or <0 if error.
  */
 pub fn prepare_proto3_response_buffer(
-    cec_command: &ChromeECCommand,
+    cec_command: &ChromeEcCommand,
     resp: &ECResponseV3,
 ) -> Result<usize, Error> {
     let in_bytes = cec_command.size_out() as usize + resp.header().len();
@@ -132,8 +133,8 @@ pub fn prepare_proto3_response_buffer(
  * @return number of bytes of response data, or <0 if error
  */
 pub fn handle_proto3_response(
-    resp: &ECResponseV3,
-    cec_command: &mut ChromeECCommand,
+    resp: &mut ECResponseV3,
+    cec_command: &mut ChromeEcCommand,
 ) -> Result<usize, Error> {
     let rs = resp.header();
 
@@ -173,7 +174,7 @@ pub fn handle_proto3_response(
     /* Return raw response. */
     cec_command.set_cmd_code(rs.result());
     cec_command.set_size_out(rs.data_len());
-    cec_command.data_out_mut().copy_from_slice(resp.data());
+    cec_command.set_data_out(resp.data_mut());
 
     /* Return error result, if any */
     if rs.result() != 0 {
@@ -189,11 +190,11 @@ pub fn handle_proto3_response(
 }
 
 pub fn send_command_proto3(
-    cec_command: &mut ChromeECCommand,
+    cec_command: &mut ChromeEcCommand,
     crosec_io: CrosECIO,
     context: &mut dyn Context,
 ) -> Result<usize, Error> {
-    let resp = ECResponseV3::new();
+    let mut resp = ECResponseV3::new();
 
     /* Create request packet */
     let req = create_proto3_request(cec_command)?;
@@ -217,11 +218,11 @@ pub fn send_command_proto3(
     }
 
     /* Process the response */
-    handle_proto3_response(&resp, cec_command)
+    handle_proto3_response(&mut resp, cec_command)
 }
 
 pub fn crosec_command_proto_v3(
-    cec_command: &mut ChromeECCommand,
+    cec_command: &mut ChromeEcCommand,
     crosec_io: CrosECIO,
     context: &mut dyn Context,
 ) -> Result<usize, Error> {
@@ -229,7 +230,7 @@ pub fn crosec_command_proto_v3(
 }
 
 pub fn crosec_command_proto(
-    cec_command: &mut ChromeECCommand,
+    cec_command: &mut ChromeEcCommand,
     crosec_io: CrosECIO,
     context: &mut dyn Context,
 ) -> Result<usize, Error> {

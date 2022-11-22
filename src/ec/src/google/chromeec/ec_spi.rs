@@ -1,6 +1,6 @@
 use crate::google::chromeec::{
     crosec_proto::crosec_command_proto,
-    ec::{ChromeECCommand, Error},
+    ec::{ChromeEcCommand, Error},
     ec_commands::HostEventCode,
     ec_i2c::{REQ_BUF, RESP_BUF},
 };
@@ -86,7 +86,7 @@ pub fn crosec_spi_io(
 }
 
 pub fn google_chromeec_command(
-    cec_command: &mut ChromeECCommand,
+    cec_command: &mut ChromeEcCommand,
     spi_map: &[SPICtrlrBuses],
 ) -> Result<(), Error> {
     static DONE: RwLock<bool> = RwLock::new(false);

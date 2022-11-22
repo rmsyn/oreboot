@@ -1,3 +1,5 @@
+use crate::google::chromeec::ec::EcData;
+
 pub const EC_CMD_GET_BOARD_VERSION: u16 = 0x0006;
 
 pub enum HostEventCode {
@@ -105,5 +107,11 @@ impl ECResponseBoardVersion {
 
     pub fn as_bytes(&self) -> [u8; 2] {
         self.board_version.to_le_bytes()
+    }
+}
+
+impl EcData for ECResponseBoardVersion {
+    fn as_bytes(&self) -> &[u8] {
+        &self.as_bytes()
     }
 }

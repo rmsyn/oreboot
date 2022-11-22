@@ -26,18 +26,35 @@ pub enum Error {
     ECResError,
     ECSPIError(SPIError),
     ECFailedContextDowncast,
+    NullData,
+}
+
+pub trait EcData {
+    fn as_bytes(&self) -> &[u8];
+}
+
+impl EcData for &[u8] {
+    fn as_bytes(&self) -> &[u8] {
+        &self
+    }
+}
+
+impl EcData for &mut [u8] {
+    fn as_bytes(&self) -> &[u8] {
+        &self
+    }
 }
 
 /* internal structure to send a command to the EC and wait for response. */
-pub struct ChromeECCommand {
+pub struct ChromeEcCommand<'a, 'b> {
     /// command code in, status out
     cmd_code: u16,
     /// command version
     cmd_version: u8,
     /// command_data, if any
-    cmd_data_in: [u8; MSG_BYTES],
+    cmd_data_in: Option<&'a dyn EcData>,
     /// command response, if any
-    cmd_data_out: [u8; MSG_BYTES],
+    cmd_data_out: Option<&'b mut dyn EcData>,
     /// size of command data
     cmd_size_in: u16,
     /// expected size of command response in, actual received size out
@@ -46,13 +63,13 @@ pub struct ChromeECCommand {
     cmd_dev_index: i32,
 }
 
-impl ChromeECCommand {
+impl<'a, 'b> ChromeEcCommand<'a, 'b> {
     pub fn new() -> Self {
         Self {
             cmd_code: 0,
             cmd_version: 3,
-            cmd_data_in: [0u8; MSG_BYTES],
-            cmd_data_out: [0u8; MSG_BYTES],
+            cmd_data_in: None,
+            cmd_data_out: None,
             cmd_size_in: 0,
             cmd_size_out: 0,
             cmd_dev_index: 0,
@@ -75,20 +92,20 @@ impl ChromeECCommand {
         self.cmd_version = version;
     }
 
-    pub fn data_in(&self) -> &[u8] {
-        &self.cmd_data_in[..self.cmd_size_in as usize]
+    pub fn data_in(&self) -> Result<&dyn EcData, Error> {
+        self.cmd_data_in.ok_or_else(|| Error::NullData)
     }
 
-    pub fn data_in_mut(&mut self) -> &mut [u8] {
-        &mut self.cmd_data_in[..self.cmd_size_in as usize]
+    pub fn data_out(&mut self) -> Result<&mut dyn EcData, Error> {
+        if let Some(c) = &mut self.cmd_data_out {
+            Ok(*c)
+        } else {
+            Err(Error::NullData)
+        }
     }
 
-    pub fn data_out(&self) -> &[u8] {
-        &self.cmd_data_out[..self.cmd_size_out as usize]
-    }
-
-    pub fn data_out_mut(&mut self) -> &mut [u8] {
-        &mut self.cmd_data_out[..self.cmd_size_out as usize]
+    pub fn set_data_out(&mut self, data: &'b mut dyn EcData) {
+        self.cmd_data_out = Some(data);
     }
 
     pub fn size_in(&self) -> u16 {
@@ -407,11 +424,11 @@ pub fn google_chromeec_get_board_version(
     _version: u32,
     spi_map: &[SPICtrlrBuses],
 ) -> Result<u32, Error> {
-    let resp = ECResponseBoardVersion::new();
-    let mut cmd = ChromeECCommand::new();
+    let mut resp = ECResponseBoardVersion::new();
+    let mut cmd = ChromeEcCommand::new();
     cmd.set_cmd_code(EC_CMD_GET_BOARD_VERSION);
     cmd.set_size_out(resp.len() as u16);
-    cmd.data_out_mut().copy_from_slice(&resp.as_bytes());
+    cmd.set_data_out(&mut resp);
 
     google_chromeec_command(&mut cmd, spi_map)?;
 
