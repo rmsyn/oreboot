@@ -3,8 +3,6 @@
 
 #[cfg(feature = "armv7")]
 pub mod armv7;
-#[cfg(feature = "armv8")]
-pub mod armv8;
 #[cfg(feature = "powerpc64")]
 pub mod ppc64;
 #[cfg(feature = "riscv32")]
