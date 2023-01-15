@@ -6,10 +6,11 @@ edition = "2021"
 
 [dependencies]
 consts = { path = "../lib/consts" }
-oreboot-arch = { path = "../arch", optional = true }
 oreboot-cpu = { path = "../cpu", optional = true }
+oreboot-asm = { path = "../lib/asm", optional = true }
 tock-registers = "0.8.1"
 
+aarch64-cpu = { version = "9.3", optional = true }
 heapless = { version = "0.7.16", optional = true }
 raw-cpuid = { version = "10.6.0", optional = true }
 util = { path = "../lib/util", optional = true }
@@ -27,5 +28,6 @@ amd = [
   "heapless",
   "vcell",
 ]
+rockchip = ["aarch64-cpu", "oreboot-asm", "oreboot-cpu/arm64"]
 sunxi = []
 sunxi_d1 = ["sunxi", "d1-pac", "embedded-hal", "embedded-hal-nb"]

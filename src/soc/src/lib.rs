@@ -9,6 +9,9 @@ pub mod aspeed;
 #[cfg(feature = "opentitan")]
 pub mod opentitan;
 
+#[cfg(feature = "rockchip")]
+pub mod rockchip;
+
 #[cfg(feature = "sifive")]
 pub mod sifive;
 

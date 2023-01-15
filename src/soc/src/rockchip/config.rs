@@ -1,0 +1,3 @@
+// In u-boot, ROCKCHIP_BOOT_MODE_REG is never set to one...
+pub const ROCKCHIP_BOOT_MODE_REG: usize = 0;
+pub const IRAM_BASE: usize = 0xff8c_0000;
