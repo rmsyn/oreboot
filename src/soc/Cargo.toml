@@ -29,5 +29,6 @@ amd = [
   "vcell",
 ]
 rockchip = ["aarch64-cpu", "oreboot-asm", "oreboot-cpu/arm64"]
+rockchip_rk3399 = ["rockchip", "embedded-hal"]
 sunxi = []
 sunxi_d1 = ["sunxi", "d1-pac", "embedded-hal", "embedded-hal-nb"]
