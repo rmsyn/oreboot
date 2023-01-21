@@ -1,0 +1,13 @@
+[package]
+name = "oreboot-global-data"
+version = "0.1.0"
+authors = ["Oreboot Authors"]
+edition = "2021"
+
+[dependencies]
+oreboot-device = { path = "../device" }
+oreboot-fdt = { path = "../fdt" }
+fdt = "0.1"
+
+[features]
+rk3399 = []
