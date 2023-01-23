@@ -20,7 +20,7 @@ MAINBOARDS := $(wildcard src/mainboard/*/*/Makefile)
 
 BINUTILS_VER := 0.3.4
 STACK_SIZES_VER := 0.4.0
-TARPAULIN_VER := 0.19.1
+TARPAULIN_VER := 0.23.1
 DPRINT_VER := 0.32.2
 
 CARGOINST := rustup run --install 1.67 cargo install
