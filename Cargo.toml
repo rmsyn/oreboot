@@ -8,6 +8,7 @@ members = [
 
   "src/lib/asm",
   "src/lib/consts",
+  "src/lib/fdt",
   "src/lib/util",
 
   "src/mainboard/sunxi/nezha/*",
