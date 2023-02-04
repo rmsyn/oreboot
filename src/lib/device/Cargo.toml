@@ -1,0 +1,8 @@
+[package]
+name = "oreboot-device"
+version = "0.1.0"
+authors = ["Oreboot Authors"]
+edition = "2021"
+
+[dependencies]
+libc = "0.2"
