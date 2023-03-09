@@ -15,6 +15,7 @@ members = [
 
   "src/mainboard/sunxi/nezha/*",
   "src/mainboard/emulation/*",
+  "src/mainboard/pine64/pinebook-pro",
 
   "xtask",
 
