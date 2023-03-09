@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DTS_DIR="${SCRIPT_DIR}/../dts"
+
+function cpp_cmd {
+	cpp -E -nostdinc -x assembler-with-cpp $@
+}
+
+mkdir -p ${DTS_DIR}/preprocessed
+
+for dts_file in `ls ${DTS_DIR}/*.dts*`; do
+	fn=$(basename ${dts_file})
+	cpp_cmd -I ${DTS_DIR}/include ${dts_file} ${DTS_DIR}/preprocessed/${fn}
+done

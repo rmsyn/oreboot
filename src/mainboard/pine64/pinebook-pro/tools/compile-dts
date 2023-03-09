@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR=$(dirname "$0")
+DTS_DIR="${SCRIPT_DIR}/../dts"
+DTB_DIR="${SCRIPT_DIR}/../dtb"
+
+mkdir -p dtb
+
+dtc -I dts -i ${DTS_DIR}/preprocessed -O dtb ${DTS_DIR}/preprocessed/rk3399-pinebook-pro.dts -o ${DTB_DIR}/rk3399-pinebook-pro.dtb
