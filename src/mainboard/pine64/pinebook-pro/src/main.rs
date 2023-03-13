@@ -2,6 +2,8 @@
 #![no_std]
 #![no_main]
 
+mod configs;
+
 use core::panic::PanicInfo;
 
 #[no_mangle]
