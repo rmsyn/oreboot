@@ -5,7 +5,14 @@ RELEASE_ELF= $(OREBOOT)/target/$(TARGET)/release/starfive-visionfive2-bt0
 RELEASE_BIN= $(OREBOOT)/target/$(TARGET)/release/starfive-visionfive2-bt0.bin
 RELEASE_MAIN= $(OREBOOT)/target/$(TARGET)/release/starfive-visionfive2-main.bin
 RELEASE_ALL= $(OREBOOT)/target/$(TARGET)/release/starfive-visionfive2-all.bin
-DRAM_SIZE := 4G
+DRAM_SIZE   ?= 4G
+
+# NOTE: We cannot put --cfg in build.rustflags, because target.xxx.rustflags
+# (in .cargo/config.toml) and build.rustflags are mutually exclusive. See also:
+# https://github.com/rust-lang/cargo/issues/5376
+RUSTFLAGS_KEY := target.riscv64imac-unknown-none-elf.rustflags
+RUSTFLAGS_CFG := [\"--cfg=dram_size=\\\"$(DRAM_SIZE)\\\"\"]
+CARGO_CONFIG := --config "$(RUSTFLAGS_KEY)=$(RUSTFLAGS_CFG)"
 
 cibuild: mainboard
 # TODO
@@ -18,7 +25,7 @@ checkformat: nop
 
 mainboard:
 	# TODO: cargo make
-	cargo build --release --config build.rustflags="'--cfg dram_size=\"$(DRAM_SIZE)\"'"
+	cargo build --release $(CARGO_CONFIG)
 	riscv64-unknown-elf-objcopy -O binary $(RELEASE_ELF) $(RELEASE_BIN)
 
 header:
