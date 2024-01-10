@@ -31,9 +31,9 @@ pub(crate) fn parse_target(
     param_variant: Option<&str>,
 ) -> Option<Target> {
     let features_from_variant = if let Some(variant) = param_variant {
-        vec![variant.to_string()]
+        vec![variant.to_string(), "dram-8g".to_owned()]
     } else {
-        vec![]
+        vec!["dram-8g".to_owned()]
     };
     if let Some((vendor, board)) = parse_target_str(cur_path, param_mainboard) {
         let vendor_board = match (vendor.as_ref(), board.as_ref()) {

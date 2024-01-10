@@ -2,14 +2,14 @@ use crate::ddrlib::{MemCfg, MemSet};
 use crate::init::{self, read32, write32};
 
 // TODO: define build time parameters (!)
-const VAL_X2: u32 = if cfg!(dram_size = "8G") {
+const VAL_X2: u32 = if cfg!(feature = "dram-8g") {
     0x36000000
 } else {
     // 2G and 4G
     0x66000000
 };
 
-const VAL_X3: u32 = if cfg!(dram_size = "8G") {
+const VAL_X3: u32 = if cfg!(feature = "dram-8g") {
     0xff
 } else {
     // 2G and 4G
@@ -320,7 +320,7 @@ pub unsafe fn start(phy_base: usize, phy_ctrl_base: usize, phy_ac_base: usize) {
         write32(addr, (v & cfg.mask) | cfg.value);
     });
     // NOTE: Commented out in VF1 code
-    if cfg!(dram_size = "2G") {
+    if cfg!(feature = "dram-2g") {
         let addr = phy_ctrl_base + 44; // 11 << 2
         let v = read32(addr);
         write32(addr, (v & 0xfffffff0) | 0x00000005);

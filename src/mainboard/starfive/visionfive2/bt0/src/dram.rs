@@ -10,17 +10,18 @@ pub fn init() {
     // That requires I2C first, see `arch/riscv/cpu/jh7110/dram.c` in U-Boot.
     // FIXME: This does not work as of now. It did in a std test project though.
     println!(
-        "DRAM: 4G: {} 2G: {}",
-        cfg!(dram_size = "4G"),
-        cfg!(dram_size = "2G")
+        "DRAM: 8G: {} 4G: {} 2G: {}",
+        cfg!(feature = "dram-8g"),
+        cfg!(feature = "dram-4g"),
+        cfg!(feature = "dram-2g")
     );
-    if cfg!(dram_size = "2G") {
+    if cfg!(feature = "dram-2g") {
         println!("2G shitty DRAM");
     }
-    if cfg!(dram_size = "4G") {
+    if cfg!(feature = "dram-4g") {
         println!("4G sparkling DRAM");
     }
-    if cfg!(dram_size = "8G") {
+    if cfg!(feature = "dram-8g") {
         println!("8G shiny DRAM");
     }
     unsafe {

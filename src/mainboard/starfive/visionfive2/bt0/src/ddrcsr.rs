@@ -52,7 +52,7 @@ fn train(phy_base: usize, training_status_reg: usize) {
 }
 
 // TODO: define build time parameters (!)
-const CFG0_X1: u32 = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+const CFG0_X1: u32 = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
     0x00000001
 } else {
     // 2G
@@ -79,35 +79,35 @@ const DDR_CSR_CFG1: [MemSet; 6] = mem_set_arr![
     {0xea8, 0x00040000},
 ];
 
-const CFG1_X1: u32 = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+const CFG1_X1: u32 = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
     0x30010006
 } else {
     // 2G
     0x10010006
 };
 
-const CFG1_X2: u32 = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+const CFG1_X2: u32 = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
     0x30020000
 } else {
     // 2G
     0x10020000
 };
 
-const CFG1_X3: u32 = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+const CFG1_X3: u32 = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
     0x30030031
 } else {
     // 2G
     0x10030031
 };
 
-const CFG1_X4: u32 = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+const CFG1_X4: u32 = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
     0x300b0033
 } else {
     // 2G
     0x100b0033
 };
 
-const CFG1_X5: u32 = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+const CFG1_X5: u32 = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
     0x30160016
 } else {
     // 2G
@@ -205,51 +205,51 @@ const DDR_CSR_CFG3: [MemCfg; 29] = mem_cfg_arr![
     {0x2e8,		0xffffffff,		0x300 	 },
 ];
 
-const CFG3_X1: u32 = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+const CFG3_X1: u32 = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
     0x30010036
 } else {
     // 2G
     0x10010036
 };
 
-const CFG3_X2: u32 = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+const CFG3_X2: u32 = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
     0x3002001b
 } else {
     // 2G
     0x10010036
 };
 
-const CFG3_X3: u32 = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+const CFG3_X3: u32 = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
     0x30030031
 } else {
     // 2G
     0x10030031
 };
 
-const CFG3_X4: u32 = if cfg!(dram_size = "8G") {
+const CFG3_X4: u32 = if cfg!(feature = "dram-8g") {
     0x300b0036
-} else if cfg!(dram_size = "4G") {
+} else if cfg!(feature = "dram-4g") {
     0x300b0066
 } else {
     // 2G
     0x100b0066
 };
 
-const CFG3_X5: u32 = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+const CFG3_X5: u32 = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
     0x30160016
 } else {
     // 2G
     0x10160016
 };
 
-const CFG3_X6: u32 = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+const CFG3_X6: u32 = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
     0x09313fff
 } else {
     // 2G
     0x09311fff
 };
 
-const CFG3_X7: u32 = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+const CFG3_X7: u32 = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
     0x00000033
 } else {
     0x00000013
@@ -326,7 +326,7 @@ pub unsafe fn omc_init(
         let addr = (sec_base_addr + cfg.reg_nr as usize);
         write32(addr, cfg.value);
     });
-    if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+    if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
         write32(sec_base_addr + 0xf34, 0x1f000041);
     } else {
         // skipped in original code
@@ -358,7 +358,7 @@ pub unsafe fn omc_init(
 
     // Drive CKE high (clock enable)
     // TODO: skip for 16G (?)
-    let val = if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+    let val = if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
         0x0000003c
     } else {
         0x0000001c
@@ -376,7 +376,7 @@ pub unsafe fn omc_init(
     write32(cfg_base_addr + 0x0010, 0x00000011);
     write32(cfg_base_addr + 0x0014, 0x00000001);
 
-    if cfg!(dram_size = "8G") || cfg!(dram_size = "4G") {
+    if cfg!(feature = "dram-8g") || cfg!(feature = "dram-4g") {
         write32(cfg_base_addr + 0x0010, 0x00000020);
         write32(cfg_base_addr + 0x0014, 0x00000001);
         // Waits tZQCAL (1 us)

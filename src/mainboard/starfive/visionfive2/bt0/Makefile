@@ -13,6 +13,16 @@ DRAM_SIZE   ?= 4G
 RUSTFLAGS_KEY := target.riscv64imac-unknown-none-elf.rustflags
 RUSTFLAGS_CFG := [\"--cfg=dram_size=\\\"$(DRAM_SIZE)\\\"\"]
 CARGO_CONFIG := --config "$(RUSTFLAGS_KEY)=$(RUSTFLAGS_CFG)"
+ifeq ($(origin DRAM_SIZE), 8G)
+  FEATURES := "--features dram-8g"
+endif
+ifeq ($(origin DRAM_SIZE), 4G)
+  FEATURES := "--features dram-4g"
+endif
+ifeq ($(origin DRAM_SIZE), 2G)
+  FEATURES := "--features dram-2g"
+endif
+
 
 cibuild: mainboard
 # TODO
@@ -25,7 +35,7 @@ checkformat: nop
 
 mainboard:
 	# TODO: cargo make
-	cargo build --release $(CARGO_CONFIG)
+	cargo build --release --features dram-8g
 	riscv64-unknown-elf-objcopy -O binary $(RELEASE_ELF) $(RELEASE_BIN)
 
 header:
