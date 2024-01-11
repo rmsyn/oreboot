@@ -6,15 +6,15 @@
 
     flash-info {
         compatible = "ore-flashinfo";
-        board-name = "QEMU aarch64";
-        category = "emulation";
-        board-url = "http://wiki.qemu.org/Main_Page";
+        board-name = "VisionFive 2";
+        category = "StarFive";
+        board-url = "https://www.starfivetech.com/en/site/boards";
         areas {
             area@0 {
-                description = "Boot Blob";
-                compatible = "ore-bootblob";
+                description = "bt0";
+                compatible = "ore-bt0";
                 size = <0x10000>; // 64k
-                file = "starfive-visionfive2-bt0.bin.normal.out";
+                file = "starfive-visionfive2-bt0.bin";
             };
             area@1 {
                 description = "Fixed DTFS";
@@ -24,6 +24,7 @@
             };
             area@2 {
                 description = "main";
+                compatible = "ore-main";
                 //size = <0x100000>; // 1MiB
 		//file = "starfive-visionfive2-main.bin";
             };
